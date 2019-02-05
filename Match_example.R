@@ -169,12 +169,12 @@ match15 <- Matchby(Y = NULL, Tr = temp15$treat == "Treatment 1",
                    X = logit(temp15$p1), by = temp15$Quint234, 
                    caliper = 0.5, replace = T, estimand = "ATT")
 
-# When match5.results ran on original function, the output was
+# Refactored results match original.
 # 0.9983108 0.5719920
-vm.results <- match5.results()
+vm.results <- match5.results(data)
 
 # Saving these results for later comparisons.
-saveRDS(vm.results, paste0(getwd(),"/output/original_vm_results.RDS"))
+saveRDS(vm.results, paste0(getwd(),"/output/refactored_vm_results.RDS"))
 
 pm.vm <- vm.results[1]
 vm.maxmax <- vm.results[2]
