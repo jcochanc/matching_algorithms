@@ -10,12 +10,19 @@ source("Match_example_functions.R") #for FM function and MaxMax2SB
 
 # Function to calculate MaxMax2SB for the pre-matched cohort
 match5.pre <- function(SD, x1, x2, x3, x4, x5){
+  # Collapsing all covariates into lists for ease.
+  X <- list( x1, x2, x3, x4, x5)
   
-  max(abs((mean(x1)-mean(x2))/SD), abs((mean(x1)-mean(x3))/SD), abs((mean(x1)-mean(x4))/SD), 
-      abs((mean(x1)-mean(x5))/SD), abs((mean(x2)-mean(x3))/SD), abs((mean(x2)-mean(x4))/SD), 
-      abs((mean(x2)-mean(x5))/SD), abs((mean(x3)-mean(x4))/SD), abs((mean(x3)-mean(x5))/SD), 
-      abs((mean(x4)-mean(x5))/SD))
-}
+  # Calculating means across covariates.
+  means <- lapply(X, mean)
+  means <- unlist(means)
+  
+  # Calculating absolute differences and standardizing with SD.
+  mean_diffs <- dist(means, method="manhattan")
+  
+  # Finding the max.
+  max(mean_diffs)
+  }
 
 # A Simulated data example for Z=5 treatment groups
 # using VM, FM, FMnc, GPSnc, and COVnc
