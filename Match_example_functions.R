@@ -1,53 +1,84 @@
-match5.results <- function(){
+
+#' @description create_data_matched is a function that runs within match5.results
+#' and generalizes P so that we can subset the data for any number of x covariates.
+#' @param P is the number of X covariates in the data set.
+#' @param data.matched is the data set that has been compiled in the example. This should
+#' be generalized later.
+
+create_data_matched <- function(P, data.matched){
+  # Initialize the x variables.
+  x_vars <- c()
+  
+  # Loop to name the x's.
+  for(i in 1:P){
+    x_vars[i] <- paste0("X",i)
+  }
+ 
+  
+  data.matched <- data.matched %>%
+                    select(id, noquote(x_vars),
+                           p1, p2, p3, p4, p5,
+                           treat, T1, T2, T3, T4, T5)
+    
+  
+  return(data.matched)
+}
+
+# Add description to match5.results
+#' @description 
+#' @param data is the example data set that has been created in the match_example.R
+#' file.
+#' 
+match5.results <- function(data){
+  # Renaming rows.
   rownames(data) <- 1:nrow(data)
+  
+  # Setting the row number as the ID.
   data$id <- 1:nrow(data)
+  
   data$both.1 <- data$id %in% match12$index.treated &
     data$id %in% match13$index.treated &
     data$id %in% match14$index.treated & 
     data$id %in% match15$index.treated
+  
   temp <- data[data$both.1 == "TRUE", ]
+  
   m12 <- cbind(match12$index.treated, match12$index.control)
+  
   m13 <- cbind(match13$index.treated, 
                match13$index.control + sum(data$treat == "Treatment 2"))
+  
   m14 <- cbind(match14$index.treated, 
                match14$index.control + sum(data$treat == "Treatment 2") + 
                  sum(data$treat == "Treatment 3"))
+  
   m15 <- cbind(match15$index.treated, 
                match15$index.control + sum(data$treat == "Treatment 2") + 
                  sum(data$treat == "Treatment 3") + 
                  sum(data$treat == "Treatment 4"))
+  
   m12 <- m12[m12[,1] %in% rownames(temp), ]
   m13 <- m13[m13[,1] %in% rownames(temp), ]
   m14 <- m14[m14[,1] %in% rownames(temp), ]
   m15 <- m15[m15[,1] %in% rownames(temp), ]
+  
   quintets <- cbind(m12[order(m12[,1]), ], m13[order(m13[,1]), ], 
                     m14[order(m14[,1]), ], m15[order(m15[,1]), ])
+  
   quintets <- as.matrix(quintets[,c(1, 2, 4, 6, 8)])
+  
   n.quint <- nrow(quintets)
   
   data.quintets <- rbind(data[as.vector(t(quintets)), ])
+  
   data.matched <- rbind(data[quintets[,1], ], 
                         data[quintets[,2], ], 
                         data[quintets[,3], ], 
                         data[quintets[,4], ], 
                         data[quintets[,5], ])
   
-  if (P == 5){
-    data.matched <- with(data.matched, 
-                         data.frame(id, X1, X2, X3, X4, X5,
-                                    p1, p2, p3, p4, p5, treat, T1, T2, T3, T4, T5))
-  }
-  if (P == 10){
-    data.matched <- with(data.matched, 
-                         data.frame(id, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10,
-                                    p1, p2, p3, p4, p5, treat, T1, T2, T3, T4, T5))
-  }
-  if (P == 20){
-    data.matched <- with(data.matched, 
-                         data.frame(id, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, 
-                                    X11, X12, X13, X14, X15, X16, X17, X18, X19, X20,
-                                    p1, p2, p3, p4, p5, treat, T1, T2, T3, T4, T5))
-  }
+  data.matched <- create_data_matched(P, data.matched)
+  
   data.unique <- unique(data.matched)
   
   n1m <- sum(data.unique$treat == "Treatment 1")
