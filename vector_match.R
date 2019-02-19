@@ -1,11 +1,11 @@
-# This is a function that implements Vector Matching (VM) for nominal treatment levels
-# CITATION: Lopez, MJ and Gutman, R. 
-# Estimation of Causal Effects with Multiple Treatments: A Review and New Ideas (2017). 
-# Statistical Science; 32(3): 432-454
-
-# W = A factor of length n indicating treatment assignment for each unit
-# Z = number of interventions (must be greater than 2)
-# X = covariates (a matrix containing the covariates to match on)
+#' @description  This is a function that implements Vector Matching (VM) for nominal treatment levels
+#' CITATION: Lopez, MJ and Gutman, R. 
+#' Estimation of Causal Effects with Multiple Treatments: A Review and New Ideas (2017). 
+#' Statistical Science; 32(3): 432-454
+#' @param W A factor of length n indicating treatment assignment for each unit.
+#' @param Z number of interventions (must be greater than 2).
+#' @param X covariates (a matrix containing the covariates to match on).
+#' @param k.clustnum need description here.
 
 vector.match <- function(W, X, t = levels(W)[1], k.clustnum = 5){
   require(car)
